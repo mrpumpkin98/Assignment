@@ -21,11 +21,11 @@ export default function AppInner() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {isLoggedIn ? (
+        {!isLoggedIn ? (
           <>
-            <Stack.Screen name="List" component={List} />
+            <Stack.Screen name="벙개" component={List} />
             <Stack.Screen name="Details" component={Detail} />
-            <Stack.Screen name="Write" component={Write} />
+            <Stack.Screen name="벙개 / 방만들기" component={Write} />
             <Stack.Screen name="Edit" component={Edit} />
             <Stack.Screen name="Chat" component={Chat} />
           </>

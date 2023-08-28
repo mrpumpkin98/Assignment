@@ -30,7 +30,7 @@ export default function SignUpScreen() {
       console.error('Error during registration:', error.message);
       Alert.alert('Error', '회원가입 실패');
     } finally {
-      setIsSigningUp(false); // Reset signing up state after registration attempt
+      setIsSigningUp(false);
     }
   };
 
