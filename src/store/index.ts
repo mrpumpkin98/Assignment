@@ -13,3 +13,8 @@ export const userState = atom({
     email: '',
   },
 });
+
+export const refreshTokenState = atom({
+  key: 'refreshTokenState',
+  default: '',
+});

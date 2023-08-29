@@ -9,19 +9,19 @@ import SignUp from './src/screen/SignUp';
 import Chat from './src/screen/Chat';
 import {useState} from 'react';
 import {Text, View} from 'react-native';
-import {useRecoilState} from 'recoil';
+import {useRecoilState, useRecoilValue} from 'recoil';
 import {userState} from './src/store';
 
 const Stack = createStackNavigator();
 
 export default function AppInner() {
-  const [user] = useRecoilState(userState); // Retrieve user data from Recoil state
-  const {isLoggedIn} = user;
+  const user = useRecoilValue(userState);
+  const isLoggedIn = user.isLoggedIn;
 
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {!isLoggedIn ? (
+        {isLoggedIn ? (
           <>
             <Stack.Screen name="벙개" component={List} />
             <Stack.Screen name="Details" component={Detail} />

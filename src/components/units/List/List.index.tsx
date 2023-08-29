@@ -71,10 +71,8 @@ export default function ListScreen() {
           </TouchableOpacity>
         )}
       />
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText} onPress={toWrite}>
-          방만들기
-        </Text>
+      <TouchableOpacity style={styles.button} onPress={toWrite}>
+        <Text style={styles.buttonText}>방만들기</Text>
       </TouchableOpacity>
     </View>
   );

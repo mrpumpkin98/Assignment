@@ -5,7 +5,7 @@ import {useNavigation} from '@react-navigation/native';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import {useRecoilState} from 'recoil';
-import {userState} from '../../../store';
+import {refreshTokenState, userState} from '../../../store';
 
 export default function SignInScreen() {
   const [email, setEmail] = useState('');
@@ -13,12 +13,13 @@ export default function SignInScreen() {
   const [isSigningIn, setIsSigningIn] = useState(false); // New state for tracking signing in
   const navigation = useNavigation();
   const [user, setUser] = useRecoilState(userState);
+  const [refreshToken, setRefreshToken] = useRecoilState(refreshTokenState);
 
   const handleSignIn = async () => {
-    if (isSigningIn) return; // Prevent double clicking while signing in
+    if (isSigningIn) return;
 
     try {
-      setIsSigningIn(true); // Set signing in state to true
+      setIsSigningIn(true);
       const userCredential = await firebase
         .auth()
         .signInWithEmailAndPassword(email, password);
@@ -29,6 +30,11 @@ export default function SignInScreen() {
           nickname: firebaseUser.displayName || '',
           email: firebaseUser.email || '',
         });
+        const idToken: string = await firebaseUser.getIdToken();
+        setRefreshToken(firebaseUser.refreshToken);
+
+        console.log('ID Token:', idToken);
+        console.log('Refresh Token:', refreshToken);
         Alert.alert('Success', '로그인 성공');
       } else {
         Alert.alert('Error', '로그인 실패');
@@ -36,7 +42,7 @@ export default function SignInScreen() {
     } catch (error) {
       Alert.alert('Error', '로그인 실패');
     } finally {
-      setIsSigningIn(false); // Reset signing in state after login attempt
+      setIsSigningIn(false);
     }
   };
 

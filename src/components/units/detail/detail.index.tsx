@@ -1,8 +1,11 @@
 import React from 'react';
 import {Text, View, Image, Button, TouchableOpacity} from 'react-native';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {styles} from './detail.style';
 import DismissKeyboardView from '../../commons/DismissKeyboardView';
+import {useRecoilValue} from 'recoil';
+import {db} from '../../../../firebaseConfig';
+import {userState} from '../../../store/index';
 
 interface Item {
   title: string;
@@ -17,6 +20,26 @@ interface Item {
 export default function DetailScreen() {
   const route = useRoute();
   const item = route.params?.item as Item;
+  const navigation = useNavigation();
+  const user = useRecoilValue(userState);
+
+  const handleChatPress = async () => {
+    try {
+      const chatRoomRef = await db.collection('chatRooms').add({
+        // 필요한 채팅방 정보를 생성 (예: 참여자 목록, 생성 시간 등)
+        participants: [user.email], // 유저 이메일을 참여자로 추가
+        createdAt: new Date(),
+      });
+
+      const chatRoomId = item.id;
+
+      // 채팅방 ID를 채팅 화면으로 전달하면서 이동
+      console.log(chatRoomId);
+      navigation.navigate('Chat' as never, {chatRoomId} as never);
+    } catch (error) {
+      console.error('Error creating chat room: ', error);
+    }
+  };
 
   return (
     <DismissKeyboardView>
@@ -42,7 +65,7 @@ export default function DetailScreen() {
             style={styles.image}
           />
           <Text style={styles.contents}>{item.contents}</Text>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={handleChatPress}>
             <Text style={styles.buttonText}>참여하기</Text>
           </TouchableOpacity>
         </View>
