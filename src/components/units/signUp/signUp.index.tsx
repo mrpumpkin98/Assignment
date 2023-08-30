@@ -4,6 +4,7 @@ import {styles} from './signUp.style';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import {firebaseConfig} from '../../../../firebaseConfig';
+import {useNavigation} from '@react-navigation/native';
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
@@ -13,21 +14,21 @@ export default function SignUpScreen() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSigningUp, setIsSigningUp] = useState(false); // New state for tracking signing up
+  const [isSigningUp, setIsSigningUp] = useState(false);
+  const navigation = useNavigation();
 
   const handleSignUp = async () => {
-    if (isSigningUp) return; // Prevent double clicking while signing up
+    if (isSigningUp) return;
 
     try {
-      setIsSigningUp(true); // Set signing up state to true
+      setIsSigningUp(true);
       const userCredential = await firebase
         .auth()
         .createUserWithEmailAndPassword(email, password);
       const user = userCredential.user;
-      console.log('User registered successfully!', user);
       Alert.alert('Success', '회원가입 성공');
+      navigation.navigate('SignIn' as never);
     } catch (error) {
-      console.error('Error during registration:', error.message);
       Alert.alert('Error', '회원가입 실패');
     } finally {
       setIsSigningUp(false);

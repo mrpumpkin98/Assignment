@@ -8,13 +8,13 @@ import {db} from '../../../../firebaseConfig';
 import {userState} from '../../../store/index';
 
 interface Item {
+  id: any;
   title: string;
   resort: string;
   event: string;
   createdAt: string;
   person: number;
   contents: string;
-  // 기타 아이템 속성을 추가할 수 있음
 }
 
 export default function DetailScreen() {
@@ -25,19 +25,28 @@ export default function DetailScreen() {
 
   const handleChatPress = async () => {
     try {
-      const chatRoomRef = await db.collection('chatRooms').add({
-        // 필요한 채팅방 정보를 생성 (예: 참여자 목록, 생성 시간 등)
-        participants: [user.email], // 유저 이메일을 참여자로 추가
-        createdAt: new Date(),
-      });
+      // const chatRoomRef = await db.collection('chatRooms').add({
+      //   // 필요한 채팅방 정보를 생성 (예: 참여자 목록, 생성 시간 등)
+      //   participants: [user.email],
+      //   createdAt: new Date(),
+      // });
 
       const chatRoomId = item.id;
-
-      // 채팅방 ID를 채팅 화면으로 전달하면서 이동
-      console.log(chatRoomId);
-      navigation.navigate('Chat' as never, {chatRoomId} as never);
+      navigation.navigate(
+        'Chat' as never,
+        {chatRoomId, title: item.title} as never,
+      );
     } catch (error) {
-      console.error('Error creating chat room: ', error);
+      console.error('에러 : ', error);
+    }
+  };
+
+  const handleDeletePress = async () => {
+    try {
+      await db.collection('post_room').doc(item.id).delete();
+      navigation.goBack();
+    } catch (error) {
+      console.error('에러 : ', error);
     }
   };
 
@@ -53,21 +62,24 @@ export default function DetailScreen() {
             </View>
             <View style={styles.editBox}>
               <Text>수정</Text>
-              <Text style={styles.delete}>삭제</Text>
+              <Text style={styles.delete} onPress={handleDeletePress}>
+                삭제
+              </Text>
             </View>
           </View>
           <View style={styles.titleBox}>
             <Text style={styles.title}>{item.title}</Text>
-            <Text>1/{item.person}</Text>
           </View>
           <Image
             source={require('Assignment/src/images/ski.png')}
             style={styles.image}
           />
           <Text style={styles.contents}>{item.contents}</Text>
-          <TouchableOpacity style={styles.button} onPress={handleChatPress}>
-            <Text style={styles.buttonText}>참여하기</Text>
-          </TouchableOpacity>
+          <View style={styles.bottomButtonContainer}>
+            <TouchableOpacity style={styles.button} onPress={handleChatPress}>
+              <Text style={styles.buttonText}>참여하기</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </DismissKeyboardView>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -12,13 +12,22 @@ import {useRoute} from '@react-navigation/native';
 import {db} from '../../../../firebaseConfig';
 import {useRecoilValue} from 'recoil';
 import {userState} from '../../../store/index';
+import {styles} from './chat.style';
+import {formatTimestamp} from '../../commons';
+
+interface Message {
+  senderId: string;
+  message: string;
+  timestamp: Date;
+}
 
 export default function ChatScreen() {
   const route = useRoute();
-  const {chatRoomId} = route.params;
+  const {chatRoomId} = route.params as {chatRoomId: any};
   const user = useRecoilValue(userState);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [messageText, setMessageText] = useState('');
+  const flatListRef = useRef(null); // useRef 추가
 
   useEffect(() => {
     const chatRoomRef = db.collection('chatRooms').doc(chatRoomId);
@@ -29,6 +38,11 @@ export default function ChatScreen() {
       .onSnapshot(snapshot => {
         const updatedMessages = snapshot.docs.map(doc => doc.data());
         setMessages(updatedMessages);
+
+        // 메시지 업데이트 시에 스크롤을 아래로 이동
+        if (flatListRef.current) {
+          flatListRef.current.scrollToEnd({animated: true});
+        }
       });
 
     return () => unsubscribe();
@@ -37,7 +51,7 @@ export default function ChatScreen() {
   const handleSendMessage = () => {
     if (messageText.trim() !== '') {
       const chatRoomRef = db.collection('chatRooms').doc(chatRoomId);
-      console.log(user);
+
       const messageData = {
         senderId: user.email,
         message: messageText,
@@ -50,35 +64,60 @@ export default function ChatScreen() {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={styles.container}>
       <FlatList
+        ref={flatListRef} // ref 연결
+        style={styles.chatList}
         data={messages}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({item}) => (
-          <Text
-            style={{
-              padding: 10,
-              alignSelf:
-                item.senderId === user.email ? 'flex-end' : 'flex-start',
-            }}>
-            {item.senderId === user.email ? '본인' : item.senderId}:{' '}
-            {item.message}
-          </Text>
+          <>
+            <View>
+              <Text>
+                {item.senderId === user.email
+                  ? ''
+                  : item.senderId.split('@')[0]}
+              </Text>
+              <View
+                style={[
+                  styles.messageBox,
+                  item.senderId === user.email
+                    ? styles.ownMessageBox
+                    : styles.otherMessageBox,
+                ]}>
+                {item.senderId === user.email && (
+                  <Text>{formatTimestamp(item.timestamp)}</Text>
+                )}
+                <Text
+                  style={[
+                    styles.messageContainer,
+                    item.senderId === user.email
+                      ? styles.ownMessage
+                      : styles.otherMessage,
+                  ]}>
+                  {item.message}
+                </Text>
+                {item.senderId !== user.email && (
+                  <Text>{formatTimestamp(item.timestamp)}</Text>
+                )}
+              </View>
+            </View>
+          </>
         )}
       />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={{borderTopWidth: 1, borderColor: '#ccc', padding: 10}}>
+        style={styles.KeyboardAvoidingView}>
         <TextInput
           placeholder="메시지 입력"
           value={messageText}
           onChangeText={text => setMessageText(text)}
-          style={{borderWidth: 1, borderColor: '#ccc', padding: 10}}
+          style={styles.TextInput}
         />
         <TouchableOpacity
           onPress={handleSendMessage}
-          style={{alignSelf: 'flex-end', marginTop: 5}}>
-          <Text style={{color: 'blue'}}>전송</Text>
+          style={styles.TouchableOpacity}>
+          <Text style={{color: 'gray'}}>전송</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </View>

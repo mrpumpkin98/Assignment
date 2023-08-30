@@ -24,10 +24,18 @@ export default function AppInner() {
         {isLoggedIn ? (
           <>
             <Stack.Screen name="벙개" component={List} />
-            <Stack.Screen name="Details" component={Detail} />
+            <Stack.Screen
+              name="Details"
+              component={Detail}
+              options={({route}) => ({title: route.params.item.title})}
+            />
             <Stack.Screen name="벙개 / 방만들기" component={Write} />
             <Stack.Screen name="Edit" component={Edit} />
-            <Stack.Screen name="Chat" component={Chat} />
+            <Stack.Screen
+              name="Chat"
+              component={Chat}
+              options={({route}) => ({title: route.params.title})}
+            />
           </>
         ) : (
           <>

@@ -11,3 +11,12 @@ export function getCurrentFormattedDateTime(): string {
 
   return `${formattedDate}`;
 }
+
+export function formatTimestamp(timestamp) {
+  const options = {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  };
+  return new Intl.DateTimeFormat('ko-KR', options).format(timestamp.toDate());
+}

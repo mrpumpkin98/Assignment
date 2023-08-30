@@ -10,7 +10,7 @@ import {refreshTokenState, userState} from '../../../store';
 export default function SignInScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSigningIn, setIsSigningIn] = useState(false); // New state for tracking signing in
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const navigation = useNavigation();
   const [user, setUser] = useRecoilState(userState);
   const [refreshToken, setRefreshToken] = useRecoilState(refreshTokenState);
@@ -33,8 +33,6 @@ export default function SignInScreen() {
         const idToken: string = await firebaseUser.getIdToken();
         setRefreshToken(firebaseUser.refreshToken);
 
-        console.log('ID Token:', idToken);
-        console.log('Refresh Token:', refreshToken);
         Alert.alert('Success', '로그인 성공');
       } else {
         Alert.alert('Error', '로그인 실패');

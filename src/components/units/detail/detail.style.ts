@@ -54,6 +54,9 @@ export const styles = StyleSheet.create({
   },
   contents: {
     marginTop: 30,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginBottom: 100,
   },
 
   button: {
@@ -65,7 +68,13 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 30,
   },
+
   buttonText: {
     fontSize: 20,
+  },
+  bottomButtonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
   },
 });

@@ -3,6 +3,10 @@ import {View, Text, TouchableOpacity, FlatList, Image} from 'react-native';
 import {styles} from './List.style';
 import {useNavigation} from '@react-navigation/native';
 import {db} from '../../../../firebaseConfig';
+import 'firebase/compat/auth';
+import firebase from 'firebase/compat/app';
+import {useRecoilState} from 'recoil';
+import {userState} from '../../../store';
 
 interface DocumentData {
   title: string;
@@ -17,6 +21,7 @@ interface DocumentData {
 export default function ListScreen() {
   const navigation = useNavigation();
   const [postData, setPostData] = useState<DocumentData[]>([]);
+  const [user, setUser] = useRecoilState(userState);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,8 +33,6 @@ export default function ListScreen() {
           })) as DocumentData[];
           setPostData(data);
         });
-
-        // Return a cleanup function to unsubscribe from the snapshot listener
         return () => unsubscribe();
       } catch (error) {
         console.error('데이터 가져오기 오류:', error);
@@ -41,6 +44,20 @@ export default function ListScreen() {
 
   const toWrite = () => {
     navigation.navigate('벙개 / 방만들기' as never);
+  };
+
+  const toLogOut = async () => {
+    try {
+      await firebase.auth().signOut(); // Firebase 로그아웃
+      setUser({
+        isLoggedIn: false,
+        nickname: '',
+        email: '',
+      });
+      navigation.navigate('SignIn' as never);
+    } catch (error) {
+      console.error('로그아웃 에러:', error);
+    }
   };
 
   const handleItemPress = (item: DocumentData) => {
@@ -71,6 +88,9 @@ export default function ListScreen() {
           </TouchableOpacity>
         )}
       />
+      <TouchableOpacity style={styles.buttonLogOut} onPress={toLogOut}>
+        <Text style={styles.buttonText}>로그아웃</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={toWrite}>
         <Text style={styles.buttonText}>방만들기</Text>
       </TouchableOpacity>

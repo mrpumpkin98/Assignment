@@ -10,6 +10,14 @@ export const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
   },
+  buttonLogOut: {
+    position: 'absolute',
+    top: 380,
+    left: 260,
+    backgroundColor: 'gray',
+    padding: 10,
+    borderRadius: 5,
+  },
   buttonText: {
     color: 'black',
   },

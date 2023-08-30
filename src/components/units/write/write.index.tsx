@@ -26,33 +26,34 @@ export default function WriteScreen(props: any) {
   const navigation = useNavigation();
   const [isSigningUp, setIsSigningUp] = useState(false);
 
-  const resorts = ['스키장1', '스키장2', '스키장3'];
-  const person = ['1', '2', '3', '4', '5', '6', '7'];
+  const resorts = [
+    '비발디파크',
+    '용평리조트',
+    '알펜시아 리조트',
+    '휘닉스 파크',
+    '오크밸리 스키장',
+  ];
+  const person = ['2', '3', '4', '5', '6', '7', '8', '9'];
   const eventOptions = ['스키', '보드', '무관'];
 
   const handleResortChange = (itemValue: string) => {
     setSelectedResort(itemValue);
-    console.log('선택된 스키장:', itemValue);
   };
 
   const handlePersonChange = (itemValue: string) => {
     setSelectedPerson(itemValue);
-    console.log('선택된 인원:', itemValue);
   };
 
   const handleEventChange = (selectedEvent: string) => {
     setSelectedEvent(selectedEvent);
-    console.log('선택된 종목:', selectedEvent);
   };
 
   const onChangeTitle = (value: string) => {
     setTitle(value);
-    console.log(value);
   };
 
   const onChangeContents = (value: string) => {
     setContents(value);
-    console.log(value);
   };
 
   const toSubmit = async () => {
@@ -69,7 +70,6 @@ export default function WriteScreen(props: any) {
         contents: contents,
         createdAt: fullFormattedDateTime,
       });
-      console.log('데이터가 성공적으로 저장되었습니다.');
       navigation.navigate('벙개' as never);
     } catch (error) {
       console.error('데이터 저장 중 오류 발생:', error);
